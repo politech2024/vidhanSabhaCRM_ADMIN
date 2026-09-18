@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #1a73e8;
+  --color-brand-blue-dark: #174ea6;
+  --color-brand-surface: #ffffff;
+  --color-brand-bg: #f1f3f4;
+  --color-brand-text: #202124;
+  --color-brand-text-secondary: #5f6368;
+  --color-brand-border: #dadce0;
+  --font-sans: Roboto, 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  background: var(--color-brand-bg);
+  color: var(--color-brand-text);
+  font-family: var(--font-sans);
+}
