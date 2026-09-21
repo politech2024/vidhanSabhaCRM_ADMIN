@@ -20,9 +20,15 @@ export interface Assembly {
   districtId: number;
 }
 
-export interface Zone {
+export interface Block {
   id: number;
   assemblyNumber: number;
+  name: string;
+}
+
+export interface Zone {
+  id: number;
+  blockId: number;
   zoneNo: number;
   zoneName: string;
   inchargeName: string | null;

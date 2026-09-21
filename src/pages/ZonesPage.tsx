@@ -14,8 +14,8 @@ const fields: FieldConfig<Zone>[] = [
 ];
 
 export function ZonesPage() {
-  const { assemblyNumber } = useParams<{ assemblyNumber: string }>();
-  const { items, loading, error, create, update, remove } = useCrud<Zone>('zones', assemblyNumber);
+  const { blockId } = useParams<{ blockId: string }>();
+  const { items, loading, error, create, update, remove } = useCrud<Zone>('zones', blockId);
   const [editing, setEditing] = useState<Zone | null>(null);
   const [creating, setCreating] = useState(false);
   const [deleting, setDeleting] = useState<Zone | null>(null);
@@ -50,7 +50,7 @@ export function ZonesPage() {
           <EntityForm
             fields={fields}
             onSubmit={async (v) => {
-              await create({ ...v, assemblyNumber: Number(assemblyNumber) });
+              await create({ ...v, blockId: Number(blockId) });
               setCreating(false);
             }}
             onCancel={() => setCreating(false)}

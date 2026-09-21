@@ -4,32 +4,18 @@ import { useCrud } from '../hooks/useCrud';
 import { DataTable } from '../components/DataTable';
 import { EntityForm, type FieldConfig } from '../components/EntityForm';
 import { ConfirmDialog } from '../components/ConfirmDialog';
-import type { Assembly } from '../types/entities';
+import type { Block } from '../types/entities';
 
-export function AssembliesPage() {
-  const { districtId } = useParams<{ districtId: string }>();
-  const { items, loading, error, create, update, remove } = useCrud<Assembly>('assemblies', districtId);
-  const [editing, setEditing] = useState<Assembly | null>(null);
+const fields: FieldConfig<Block>[] = [{ key: 'name', label: 'Block name' }];
+
+export function BlocksPage() {
+  const { assemblyNumber } = useParams<{ assemblyNumber: string }>();
+  const { items, loading, error, create, update, remove } = useCrud<Block>('blocks', assemblyNumber);
+  const [editing, setEditing] = useState<Block | null>(null);
   const [creating, setCreating] = useState(false);
-  const [deleting, setDeleting] = useState<Assembly | null>(null);
+  const [deleting, setDeleting] = useState<Block | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const navigate = useNavigate();
-
-  const fields: FieldConfig<Assembly>[] = [
-    { key: 'id', label: 'Constituency number', type: 'number' },
-    { key: 'name', label: 'Assembly name' },
-    {
-      key: 'reservation',
-      label: 'Reservation',
-      type: 'select',
-      options: [
-        { value: 'GEN', label: 'General' },
-        { value: 'SC', label: 'SC' },
-        { value: 'ST', label: 'ST' },
-      ],
-    },
-    { key: 'totalBooths', label: 'Total booths', type: 'number' },
-  ];
 
   async function handleDelete() {
     if (!deleting) return;
@@ -45,9 +31,9 @@ export function AssembliesPage() {
   return (
     <div className="mx-auto max-w-4xl p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-brand-text">Assemblies</h1>
+        <h1 className="text-lg font-semibold text-brand-text">Blocks</h1>
         <button onClick={() => setCreating(true)} className="rounded-md bg-brand-blue px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-blue-dark">
-          + Add assembly
+          + Add block
         </button>
       </div>
 
@@ -58,9 +44,8 @@ export function AssembliesPage() {
         <div className="mb-4">
           <EntityForm
             fields={fields}
-            initial={{ districtId: Number(districtId) } as Partial<Assembly>}
             onSubmit={async (v) => {
-              await create({ ...v, districtId: Number(districtId) });
+              await create({ ...v, assemblyNumber: Number(assemblyNumber) });
               setCreating(false);
             }}
             onCancel={() => setCreating(false)}
@@ -83,24 +68,19 @@ export function AssembliesPage() {
       )}
 
       <DataTable
-        columns={[
-          { key: 'id', label: 'No.' },
-          { key: 'name', label: 'Name' },
-          { key: 'reservation', label: 'Reservation' },
-          { key: 'totalBooths', label: 'Booths' },
-        ]}
+        columns={[{ key: 'name', label: 'Name' }]}
         rows={items}
-        onRowClick={(a) => navigate(`/assemblies/${a.id}/blocks`)}
+        onRowClick={(b) => navigate(`/blocks/${b.id}/zones`)}
         onEdit={setEditing}
-        onDelete={(a) => {
-          setDeleting(a);
+        onDelete={(b) => {
+          setDeleting(b);
           setDeleteError(null);
         }}
       />
 
       <ConfirmDialog
         open={!!deleting}
-        title="Delete assembly?"
+        title="Delete block?"
         message={`This will fail if ${deleting?.name} still has zones attached — delete those first.`}
         error={deleteError}
         onCancel={() => setDeleting(null)}

@@ -4,6 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
 import { DistrictsPage } from './pages/DistrictsPage';
 import { AssembliesPage } from './pages/AssembliesPage';
+import { BlocksPage } from './pages/BlocksPage';
 import { ZonesPage } from './pages/ZonesPage';
 import { MandalsPage } from './pages/MandalsPage';
 import { PanchayatsPage } from './pages/PanchayatsPage';
@@ -35,7 +36,8 @@ function App() {
           <Route path="/" element={<Navigate to="/districts" replace />} />
           <Route path="/districts" element={<DistrictsPage />} />
           <Route path="/districts/:districtId/assemblies" element={<AssembliesPage />} />
-          <Route path="/assemblies/:assemblyNumber/zones" element={<ZonesPage />} />
+          <Route path="/assemblies/:assemblyNumber/blocks" element={<BlocksPage />} />
+          <Route path="/blocks/:blockId/zones" element={<ZonesPage />} />
           <Route path="/zones/:zoneId/mandals" element={<MandalsPage />} />
           <Route path="/mandals/:mandalId/panchayats" element={<PanchayatsPage />} />
           <Route path="/panchayats/:panchayatId/booths" element={<BoothsPage />} />
