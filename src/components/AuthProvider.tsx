@@ -1,20 +1,7 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { apiFetch, API_BASE } from '../lib/apiClient';
+import { AuthContext, type AuthUser } from '../context/AuthContext';
 
-interface AuthUser {
-  id: number;
-  name: string;
-  email: string;
-}
-
-interface AuthContextValue {
-  token: string | null;
-  user: AuthUser | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null);
 const TOKEN_KEY = 'admin_token';
 const USER_KEY = 'admin_user';
 
@@ -44,10 +31,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return <AuthContext.Provider value={{ token, user, login, logout }}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx;
 }
