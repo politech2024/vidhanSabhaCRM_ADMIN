@@ -24,6 +24,8 @@ export interface Block {
   id: number;
   assemblyNumber: number;
   name: string;
+  inchargeName: string | null;
+  inchargePhones: string[];
 }
 
 export interface Zone {

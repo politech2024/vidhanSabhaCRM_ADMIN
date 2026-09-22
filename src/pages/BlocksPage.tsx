@@ -6,7 +6,11 @@ import { EntityForm, type FieldConfig } from '../components/EntityForm';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import type { Block } from '../types/entities';
 
-const fields: FieldConfig<Block>[] = [{ key: 'name', label: 'Block name' }];
+const fields: FieldConfig<Block>[] = [
+  { key: 'name', label: 'Block name' },
+  { key: 'inchargeName', label: 'Block President name' },
+  { key: 'inchargePhones', label: 'Block President phone(s)', type: 'csv' },
+];
 
 export function BlocksPage() {
   const { assemblyNumber } = useParams<{ assemblyNumber: string }>();
@@ -68,7 +72,10 @@ export function BlocksPage() {
       )}
 
       <DataTable
-        columns={[{ key: 'name', label: 'Name' }]}
+        columns={[
+          { key: 'name', label: 'Name' },
+          { key: 'inchargeName', label: 'Block President' },
+        ]}
         rows={items}
         onRowClick={(b) => navigate(`/blocks/${b.id}/zones`)}
         onEdit={setEditing}
