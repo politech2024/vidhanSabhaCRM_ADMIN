@@ -96,4 +96,6 @@ export const hi: typeof en = {
   typeEvent: 'कार्यक्रम',
   noSubmissions: 'यहाँ कोई सबमिशन नहीं है।',
   actionFailed: 'कार्रवाई विफल',
+  deleteSubmissionTitle: 'यह प्रविष्टि हटाएं?',
+  deleteSubmissionMessage: 'इसे पूर्ववत नहीं किया जा सकता, और पृष्ठ पर संबंधित गणना एक से घट जाएगी।',
 };

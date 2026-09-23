@@ -94,4 +94,6 @@ export const en = {
   typeEvent: 'Event',
   noSubmissions: 'No submissions here.',
   actionFailed: 'Action failed',
+  deleteSubmissionTitle: 'Delete this entry?',
+  deleteSubmissionMessage: 'This cannot be undone, and the matching counter on the page will go back down by one.',
 };

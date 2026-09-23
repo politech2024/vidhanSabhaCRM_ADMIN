@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSubmissions } from '../hooks/useSubmissions';
 import { useLanguage } from '../hooks/useLanguage';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import type { Submission } from '../types/entities';
 
 const TYPE_BADGE: Record<Submission['type'], string> = {
@@ -12,14 +13,17 @@ const TYPE_BADGE: Record<Submission['type'], string> = {
 export function SubmissionsPage() {
   const { t } = useLanguage();
   const { items, loading, error, remove } = useSubmissions();
+  const [deleting, setDeleting] = useState<Submission | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
   const typeLabel: Record<Submission['type'], string> = { note: t.typeNote, issue: t.typeIssue, event: t.typeEvent };
 
-  async function handleDelete(id: number) {
+  async function handleDelete() {
+    if (!deleting) return;
     setActionError(null);
     try {
-      await remove(id);
+      await remove(deleting.id);
+      setDeleting(null);
     } catch (err) {
       setActionError(err instanceof Error ? err.message : t.actionFailed);
     }
@@ -33,7 +37,6 @@ export function SubmissionsPage() {
 
       {loading && <p className="text-sm text-brand-text-secondary">{t.loading}</p>}
       {error && <p className="text-sm text-red-600">{error}</p>}
-      {actionError && <p className="mb-2 text-sm text-red-600">{actionError}</p>}
 
       <div className="space-y-2.5">
         {!loading && items.length === 0 && (
@@ -56,7 +59,10 @@ export function SubmissionsPage() {
             </div>
             <div className="flex justify-end">
               <button
-                onClick={() => handleDelete(s.id)}
+                onClick={() => {
+                  setDeleting(s);
+                  setActionError(null);
+                }}
                 className="rounded-md px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-brand-bg"
               >
                 {t.delete}
@@ -65,6 +71,15 @@ export function SubmissionsPage() {
           </div>
         ))}
       </div>
+
+      <ConfirmDialog
+        open={!!deleting}
+        title={t.deleteSubmissionTitle}
+        message={t.deleteSubmissionMessage}
+        error={actionError}
+        onCancel={() => setDeleting(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }
