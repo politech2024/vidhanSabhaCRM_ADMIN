@@ -79,7 +79,6 @@ export interface Booth {
 
 export type EntityType = 'zone' | 'mandal' | 'panchayat' | 'booth';
 export type SubmissionType = 'note' | 'issue' | 'event';
-export type SubmissionStatus = 'pending' | 'approved' | 'rejected';
 
 export interface Submission {
   id: number;
@@ -88,10 +87,6 @@ export interface Submission {
   entityLabel: string;
   type: SubmissionType;
   message: string;
-  submitterName: string | null;
-  submitterPhone: string | null;
-  status: SubmissionStatus;
-  reviewNote: string | null;
+  eventAt: string | null;
   createdAt: string;
-  reviewedAt: string | null;
 }

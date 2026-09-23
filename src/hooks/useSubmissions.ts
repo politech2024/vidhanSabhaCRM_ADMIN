@@ -1,45 +1,42 @@
 import { useEffect, useState } from 'react';
 import { apiFetch, API_BASE } from '../lib/apiClient';
 import { useAuth } from './useAuth';
-import type { Submission, SubmissionStatus } from '../types/entities';
+import type { Submission } from '../types/entities';
 
-export function useSubmissions(status: SubmissionStatus | 'all') {
+const LIST_URL = `${API_BASE}/api/admin/submissions`;
+
+export function useSubmissions() {
   const { token } = useAuth();
-  const url = `${API_BASE}/api/admin/submissions${status === 'all' ? '' : `?status=${status}`}`;
-
-  const [state, setState] = useState<{ url: string; items: Submission[] | null; error: string | null }>({
-    url: '',
-    items: null,
-    error: null,
-  });
-
-  if (state.url !== url) {
-    setState({ url, items: null, error: null });
-  }
+  const [items, setItems] = useState<Submission[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    apiFetch<Submission[]>(url, { token })
+    apiFetch<Submission[]>(LIST_URL, { token })
       .then((data) => {
-        if (!cancelled) setState({ url, items: data, error: null });
+        if (!cancelled) setItems(data);
       })
       .catch((err: unknown) => {
-        if (!cancelled) setState({ url, items: [], error: err instanceof Error ? err.message : 'Failed to load' });
+        if (!cancelled) {
+          setItems([]);
+          setError(err instanceof Error ? err.message : 'Failed to load');
+        }
       });
     return () => {
       cancelled = true;
     };
-  }, [url, token]);
+  }, [token]);
 
   async function refresh() {
-    const data = await apiFetch<Submission[]>(url, { token });
-    setState({ url, items: data, error: null });
+    const data = await apiFetch<Submission[]>(LIST_URL, { token });
+    setItems(data);
+    setError(null);
   }
 
-  async function review(id: number, next: 'approved' | 'rejected') {
-    await apiFetch(`${API_BASE}/api/admin/submissions/${id}`, { method: 'PATCH', token, body: { status: next } });
+  async function remove(id: number) {
+    await apiFetch(`${LIST_URL}/${id}`, { method: 'DELETE', token });
     await refresh();
   }
 
-  return { items: state.items ?? [], loading: state.url === url && state.items === null, error: state.error, review };
+  return { items: items ?? [], loading: items === null, error, remove };
 }
