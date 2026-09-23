@@ -35,6 +35,10 @@ export interface Zone {
   zoneName: string;
   inchargeName: string | null;
   inchargePhones: string[];
+  notesLogged: number;
+  openIssues: number;
+  eventsLogged: number;
+  totalEntries: number;
 }
 
 export interface Mandal {
@@ -43,12 +47,20 @@ export interface Mandal {
   mandalNo: number;
   inchargeName: string | null;
   inchagePhones: string[];
+  notesLogged: number;
+  openIssues: number;
+  eventsLogged: number;
+  totalEntries: number;
 }
 
 export interface Panchayat {
   id: number;
   mandalId: number;
   name: string;
+  notesLogged: number;
+  openIssues: number;
+  eventsLogged: number;
+  totalEntries: number;
 }
 
 export interface Booth {
@@ -63,4 +75,23 @@ export interface Booth {
   openIssues: number;
   eventsLogged: number;
   totalEntries: number;
+}
+
+export type EntityType = 'zone' | 'mandal' | 'panchayat' | 'booth';
+export type SubmissionType = 'note' | 'issue' | 'event';
+export type SubmissionStatus = 'pending' | 'approved' | 'rejected';
+
+export interface Submission {
+  id: number;
+  entityType: EntityType;
+  entityId: number;
+  entityLabel: string;
+  type: SubmissionType;
+  message: string;
+  submitterName: string | null;
+  submitterPhone: string | null;
+  status: SubmissionStatus;
+  reviewNote: string | null;
+  createdAt: string;
+  reviewedAt: string | null;
 }

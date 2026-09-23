@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './components/AuthProvider';
 import { useAuth } from './hooks/useAuth';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -10,6 +10,7 @@ import { ZonesPage } from './pages/ZonesPage';
 import { MandalsPage } from './pages/MandalsPage';
 import { PanchayatsPage } from './pages/PanchayatsPage';
 import { BoothsPage } from './pages/BoothsPage';
+import { SubmissionsPage } from './pages/SubmissionsPage';
 import { LanguageToggle } from './components/LanguageToggle';
 import { useLanguage } from './hooks/useLanguage';
 
@@ -19,7 +20,12 @@ function Header() {
   if (!user) return null;
   return (
     <header className="flex items-center justify-between border-b border-brand-border bg-brand-surface px-6 py-3">
-      <span className="text-sm font-medium text-brand-text">{t.appTitle}</span>
+      <div className="flex items-center gap-4">
+        <span className="text-sm font-medium text-brand-text">{t.appTitle}</span>
+        <Link to="/submissions" className="text-sm font-medium text-brand-blue hover:underline">
+          {t.submissionsNavLink}
+        </Link>
+      </div>
       <div className="flex items-center gap-3 text-sm text-brand-text-secondary">
         <span>{user.email}</span>
         <LanguageToggle />
@@ -46,6 +52,7 @@ function App() {
           <Route path="/zones/:zoneId/mandals" element={<MandalsPage />} />
           <Route path="/mandals/:mandalId/panchayats" element={<PanchayatsPage />} />
           <Route path="/panchayats/:panchayatId/booths" element={<BoothsPage />} />
+          <Route path="/submissions" element={<SubmissionsPage />} />
           <Route path="*" element={<Navigate to="/districts" replace />} />
         </Route>
       </Routes>
