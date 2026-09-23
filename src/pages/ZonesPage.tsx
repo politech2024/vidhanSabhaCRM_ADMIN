@@ -5,15 +5,16 @@ import { DataTable } from '../components/DataTable';
 import { EntityForm, type FieldConfig } from '../components/EntityForm';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import type { Zone } from '../types/entities';
-
-const fields: FieldConfig<Zone>[] = [
-  { key: 'zoneNo', label: 'Zone number', type: 'number' },
-  { key: 'zoneName', label: 'Zone name' },
-  { key: 'inchargeName', label: 'In-charge name' },
-  { key: 'inchargePhones', label: 'In-charge phone(s)', type: 'csv' },
-];
+import { useLanguage } from '../hooks/useLanguage';
 
 export function ZonesPage() {
+  const { t } = useLanguage();
+  const fields: FieldConfig<Zone>[] = [
+    { key: 'zoneNo', label: t.fieldZoneNumber, type: 'number' },
+    { key: 'zoneName', label: t.fieldZoneName },
+    { key: 'inchargeName', label: t.fieldInchargeName },
+    { key: 'inchargePhones', label: t.fieldInchargePhones, type: 'csv' },
+  ];
   const { blockId } = useParams<{ blockId: string }>();
   const { items, loading, error, create, update, remove } = useCrud<Zone>('zones', blockId);
   const [editing, setEditing] = useState<Zone | null>(null);
@@ -29,20 +30,20 @@ export function ZonesPage() {
       setDeleting(null);
       setDeleteError(null);
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Delete failed');
+      setDeleteError(err instanceof Error ? err.message : t.deleteFailed);
     }
   }
 
   return (
     <div className="mx-auto max-w-4xl p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-brand-text">Zones</h1>
+        <h1 className="text-lg font-semibold text-brand-text">{t.zonesTitle}</h1>
         <button onClick={() => setCreating(true)} className="rounded-md bg-brand-blue px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-blue-dark">
-          + Add zone
+          {t.addZone}
         </button>
       </div>
 
-      {loading && <p className="text-sm text-brand-text-secondary">Loading…</p>}
+      {loading && <p className="text-sm text-brand-text-secondary">{t.loading}</p>}
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {creating && (
@@ -54,7 +55,7 @@ export function ZonesPage() {
               setCreating(false);
             }}
             onCancel={() => setCreating(false)}
-            submitLabel="Create"
+            submitLabel={t.create}
           />
         </div>
       )}
@@ -74,9 +75,9 @@ export function ZonesPage() {
 
       <DataTable
         columns={[
-          { key: 'zoneNo', label: 'No.' },
-          { key: 'zoneName', label: 'Name' },
-          { key: 'inchargeName', label: 'In-charge' },
+          { key: 'zoneNo', label: t.colNo },
+          { key: 'zoneName', label: t.colName },
+          { key: 'inchargeName', label: t.colInCharge },
         ]}
         rows={items}
         onRowClick={(z) => navigate(`/zones/${z.id}/mandals`)}
@@ -89,8 +90,8 @@ export function ZonesPage() {
 
       <ConfirmDialog
         open={!!deleting}
-        title="Delete zone?"
-        message={`This will fail if ${deleting?.zoneName} still has mandals attached — delete those first.`}
+        title={t.deleteZoneTitle}
+        message={deleting ? t.deleteZoneMessage(deleting.zoneName) : ''}
         error={deleteError}
         onCancel={() => setDeleting(null)}
         onConfirm={handleDelete}

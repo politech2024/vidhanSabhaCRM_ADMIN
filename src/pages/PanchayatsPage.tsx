@@ -5,10 +5,11 @@ import { DataTable } from '../components/DataTable';
 import { EntityForm, type FieldConfig } from '../components/EntityForm';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import type { Panchayat } from '../types/entities';
-
-const fields: FieldConfig<Panchayat>[] = [{ key: 'name', label: 'Gram panchayat name' }];
+import { useLanguage } from '../hooks/useLanguage';
 
 export function PanchayatsPage() {
+  const { t } = useLanguage();
+  const fields: FieldConfig<Panchayat>[] = [{ key: 'name', label: t.fieldPanchayatName }];
   const { mandalId } = useParams<{ mandalId: string }>();
   const { items, loading, error, create, update, remove } = useCrud<Panchayat>('panchayats', mandalId);
   const [editing, setEditing] = useState<Panchayat | null>(null);
@@ -24,20 +25,20 @@ export function PanchayatsPage() {
       setDeleting(null);
       setDeleteError(null);
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Delete failed');
+      setDeleteError(err instanceof Error ? err.message : t.deleteFailed);
     }
   }
 
   return (
     <div className="mx-auto max-w-4xl p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-brand-text">Gram Panchayats</h1>
+        <h1 className="text-lg font-semibold text-brand-text">{t.panchayatsTitle}</h1>
         <button onClick={() => setCreating(true)} className="rounded-md bg-brand-blue px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-blue-dark">
-          + Add panchayat
+          {t.addPanchayat}
         </button>
       </div>
 
-      {loading && <p className="text-sm text-brand-text-secondary">Loading…</p>}
+      {loading && <p className="text-sm text-brand-text-secondary">{t.loading}</p>}
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {creating && (
@@ -49,7 +50,7 @@ export function PanchayatsPage() {
               setCreating(false);
             }}
             onCancel={() => setCreating(false)}
-            submitLabel="Create"
+            submitLabel={t.create}
           />
         </div>
       )}
@@ -68,7 +69,7 @@ export function PanchayatsPage() {
       )}
 
       <DataTable
-        columns={[{ key: 'name', label: 'Name' }]}
+        columns={[{ key: 'name', label: t.colName }]}
         rows={items}
         onRowClick={(p) => navigate(`/panchayats/${p.id}/booths`)}
         onEdit={setEditing}
@@ -80,8 +81,8 @@ export function PanchayatsPage() {
 
       <ConfirmDialog
         open={!!deleting}
-        title="Delete panchayat?"
-        message="This will fail if it still has booths attached — delete those first."
+        title={t.deletePanchayatTitle}
+        message={t.deletePanchayatMessage}
         error={deleteError}
         onCancel={() => setDeleting(null)}
         onConfirm={handleDelete}

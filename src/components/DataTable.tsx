@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface Column<T> {
   key: keyof T;
@@ -15,6 +16,7 @@ interface DataTableProps<T extends { id: number }> {
 }
 
 export function DataTable<T extends { id: number }>({ columns, rows, onEdit, onDelete, onRowClick }: DataTableProps<T>) {
+  const { t } = useLanguage();
   return (
     <div className="overflow-x-auto rounded-lg border border-brand-border bg-brand-surface">
       <table className="w-full text-left text-sm">
@@ -25,7 +27,7 @@ export function DataTable<T extends { id: number }>({ columns, rows, onEdit, onD
                 {c.label}
               </th>
             ))}
-            <th className="px-4 py-2.5 text-right">Actions</th>
+            <th className="px-4 py-2.5 text-right">{t.actions}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-brand-border">
@@ -44,7 +46,7 @@ export function DataTable<T extends { id: number }>({ columns, rows, onEdit, onD
                   }}
                   className="mr-3 text-sm font-medium text-brand-blue hover:underline"
                 >
-                  Edit
+                  {t.edit}
                 </button>
                 <button
                   onClick={(e) => {
@@ -53,7 +55,7 @@ export function DataTable<T extends { id: number }>({ columns, rows, onEdit, onD
                   }}
                   className="text-sm font-medium text-red-600 hover:underline"
                 >
-                  Delete
+                  {t.delete}
                 </button>
               </td>
             </tr>
@@ -61,7 +63,7 @@ export function DataTable<T extends { id: number }>({ columns, rows, onEdit, onD
           {rows.length === 0 && (
             <tr>
               <td colSpan={columns.length + 1} className="px-4 py-8 text-center text-brand-text-secondary">
-                No records yet.
+                {t.noRecordsYet}
               </td>
             </tr>
           )}

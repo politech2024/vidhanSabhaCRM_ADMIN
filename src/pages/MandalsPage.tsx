@@ -5,14 +5,15 @@ import { DataTable } from '../components/DataTable';
 import { EntityForm, type FieldConfig } from '../components/EntityForm';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import type { Mandal } from '../types/entities';
-
-const fields: FieldConfig<Mandal>[] = [
-  { key: 'mandalNo', label: 'Mandal number', type: 'number' },
-  { key: 'inchargeName', label: 'In-charge name' },
-  { key: 'inchagePhones', label: 'In-charge phone(s)', type: 'csv' },
-];
+import { useLanguage } from '../hooks/useLanguage';
 
 export function MandalsPage() {
+  const { t } = useLanguage();
+  const fields: FieldConfig<Mandal>[] = [
+    { key: 'mandalNo', label: t.fieldMandalNumber, type: 'number' },
+    { key: 'inchargeName', label: t.fieldInchargeName },
+    { key: 'inchagePhones', label: t.fieldInchargePhones, type: 'csv' },
+  ];
   const { zoneId } = useParams<{ zoneId: string }>();
   const { items, loading, error, create, update, remove } = useCrud<Mandal>('mandals', zoneId);
   const [editing, setEditing] = useState<Mandal | null>(null);
@@ -28,20 +29,20 @@ export function MandalsPage() {
       setDeleting(null);
       setDeleteError(null);
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Delete failed');
+      setDeleteError(err instanceof Error ? err.message : t.deleteFailed);
     }
   }
 
   return (
     <div className="mx-auto max-w-4xl p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-brand-text">Mandals</h1>
+        <h1 className="text-lg font-semibold text-brand-text">{t.mandalsTitle}</h1>
         <button onClick={() => setCreating(true)} className="rounded-md bg-brand-blue px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-blue-dark">
-          + Add mandal
+          {t.addMandal}
         </button>
       </div>
 
-      {loading && <p className="text-sm text-brand-text-secondary">Loading…</p>}
+      {loading && <p className="text-sm text-brand-text-secondary">{t.loading}</p>}
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {creating && (
@@ -53,7 +54,7 @@ export function MandalsPage() {
               setCreating(false);
             }}
             onCancel={() => setCreating(false)}
-            submitLabel="Create"
+            submitLabel={t.create}
           />
         </div>
       )}
@@ -73,8 +74,8 @@ export function MandalsPage() {
 
       <DataTable
         columns={[
-          { key: 'mandalNo', label: 'No.' },
-          { key: 'inchargeName', label: 'In-charge' },
+          { key: 'mandalNo', label: t.colNo },
+          { key: 'inchargeName', label: t.colInCharge },
         ]}
         rows={items}
         onRowClick={(m) => navigate(`/mandals/${m.id}/panchayats`)}
@@ -87,8 +88,8 @@ export function MandalsPage() {
 
       <ConfirmDialog
         open={!!deleting}
-        title="Delete mandal?"
-        message="This will fail if it still has gram panchayats attached — delete those first."
+        title={t.deleteMandalTitle}
+        message={t.deleteMandalMessage}
         error={deleteError}
         onCancel={() => setDeleting(null)}
         onConfirm={handleDelete}

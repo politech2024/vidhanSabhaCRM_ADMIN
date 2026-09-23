@@ -5,16 +5,17 @@ import { DataTable } from '../components/DataTable';
 import { EntityForm, type FieldConfig } from '../components/EntityForm';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import type { Booth } from '../types/entities';
-
-const fields: FieldConfig<Booth>[] = [
-  { key: 'boothNo', label: 'Booth number', type: 'number' },
-  { key: 'boothName', label: 'Booth name' },
-  { key: 'inchargeName', label: 'In-charge name' },
-  { key: 'inchargePhones', label: 'In-charge phone(s)', type: 'csv' },
-  { key: 'flags', label: 'Flags', type: 'csv' },
-];
+import { useLanguage } from '../hooks/useLanguage';
 
 export function BoothsPage() {
+  const { t } = useLanguage();
+  const fields: FieldConfig<Booth>[] = [
+    { key: 'boothNo', label: t.fieldBoothNumber, type: 'number' },
+    { key: 'boothName', label: t.fieldBoothName },
+    { key: 'inchargeName', label: t.fieldInchargeName },
+    { key: 'inchargePhones', label: t.fieldInchargePhones, type: 'csv' },
+    { key: 'flags', label: t.fieldFlags, type: 'csv' },
+  ];
   const { panchayatId } = useParams<{ panchayatId: string }>();
   const { items, loading, error, create, update, remove } = useCrud<Booth>('booths', panchayatId);
   const [editing, setEditing] = useState<Booth | null>(null);
@@ -29,20 +30,20 @@ export function BoothsPage() {
       setDeleting(null);
       setDeleteError(null);
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Delete failed');
+      setDeleteError(err instanceof Error ? err.message : t.deleteFailed);
     }
   }
 
   return (
     <div className="mx-auto max-w-4xl p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-brand-text">Booths</h1>
+        <h1 className="text-lg font-semibold text-brand-text">{t.boothsTitle}</h1>
         <button onClick={() => setCreating(true)} className="rounded-md bg-brand-blue px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-blue-dark">
-          + Add booth
+          {t.addBooth}
         </button>
       </div>
 
-      {loading && <p className="text-sm text-brand-text-secondary">Loading…</p>}
+      {loading && <p className="text-sm text-brand-text-secondary">{t.loading}</p>}
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {creating && (
@@ -54,7 +55,7 @@ export function BoothsPage() {
               setCreating(false);
             }}
             onCancel={() => setCreating(false)}
-            submitLabel="Create"
+            submitLabel={t.create}
           />
         </div>
       )}
@@ -74,9 +75,9 @@ export function BoothsPage() {
 
       <DataTable
         columns={[
-          { key: 'boothNo', label: 'No.' },
-          { key: 'boothName', label: 'Name' },
-          { key: 'inchargeName', label: 'In-charge' },
+          { key: 'boothNo', label: t.colNo },
+          { key: 'boothName', label: t.colName },
+          { key: 'inchargeName', label: t.colInCharge },
         ]}
         rows={items}
         onEdit={setEditing}
@@ -88,8 +89,8 @@ export function BoothsPage() {
 
       <ConfirmDialog
         open={!!deleting}
-        title="Delete booth?"
-        message={`Delete ${deleting?.boothName}? This cannot be undone.`}
+        title={t.deleteBoothTitle}
+        message={deleting ? t.deleteBoothMessage(deleting.boothName) : ''}
         error={deleteError}
         onCancel={() => setDeleting(null)}
         onConfirm={handleDelete}

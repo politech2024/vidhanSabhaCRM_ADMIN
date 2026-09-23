@@ -5,14 +5,15 @@ import { DataTable } from '../components/DataTable';
 import { EntityForm, type FieldConfig } from '../components/EntityForm';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import type { Block } from '../types/entities';
-
-const fields: FieldConfig<Block>[] = [
-  { key: 'name', label: 'Block name' },
-  { key: 'inchargeName', label: 'Block President name' },
-  { key: 'inchargePhones', label: 'Block President phone(s)', type: 'csv' },
-];
+import { useLanguage } from '../hooks/useLanguage';
 
 export function BlocksPage() {
+  const { t } = useLanguage();
+  const fields: FieldConfig<Block>[] = [
+    { key: 'name', label: t.fieldBlockName },
+    { key: 'inchargeName', label: t.fieldBlockPresidentName },
+    { key: 'inchargePhones', label: t.fieldBlockPresidentPhones, type: 'csv' },
+  ];
   const { assemblyNumber } = useParams<{ assemblyNumber: string }>();
   const { items, loading, error, create, update, remove } = useCrud<Block>('blocks', assemblyNumber);
   const [editing, setEditing] = useState<Block | null>(null);
@@ -28,20 +29,20 @@ export function BlocksPage() {
       setDeleting(null);
       setDeleteError(null);
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Delete failed');
+      setDeleteError(err instanceof Error ? err.message : t.deleteFailed);
     }
   }
 
   return (
     <div className="mx-auto max-w-4xl p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-brand-text">Blocks</h1>
+        <h1 className="text-lg font-semibold text-brand-text">{t.blocksTitle}</h1>
         <button onClick={() => setCreating(true)} className="rounded-md bg-brand-blue px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-blue-dark">
-          + Add block
+          {t.addBlock}
         </button>
       </div>
 
-      {loading && <p className="text-sm text-brand-text-secondary">Loading…</p>}
+      {loading && <p className="text-sm text-brand-text-secondary">{t.loading}</p>}
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {creating && (
@@ -53,7 +54,7 @@ export function BlocksPage() {
               setCreating(false);
             }}
             onCancel={() => setCreating(false)}
-            submitLabel="Create"
+            submitLabel={t.create}
           />
         </div>
       )}
@@ -73,8 +74,8 @@ export function BlocksPage() {
 
       <DataTable
         columns={[
-          { key: 'name', label: 'Name' },
-          { key: 'inchargeName', label: 'Block President' },
+          { key: 'name', label: t.colName },
+          { key: 'inchargeName', label: t.colBlockPresident },
         ]}
         rows={items}
         onRowClick={(b) => navigate(`/blocks/${b.id}/zones`)}
@@ -87,8 +88,8 @@ export function BlocksPage() {
 
       <ConfirmDialog
         open={!!deleting}
-        title="Delete block?"
-        message={`This will fail if ${deleting?.name} still has zones attached — delete those first.`}
+        title={t.deleteBlockTitle}
+        message={deleting ? t.deleteBlockMessage(deleting.name) : ''}
         error={deleteError}
         onCancel={() => setDeleting(null)}
         onConfirm={handleDelete}

@@ -10,17 +10,21 @@ import { ZonesPage } from './pages/ZonesPage';
 import { MandalsPage } from './pages/MandalsPage';
 import { PanchayatsPage } from './pages/PanchayatsPage';
 import { BoothsPage } from './pages/BoothsPage';
+import { LanguageToggle } from './components/LanguageToggle';
+import { useLanguage } from './hooks/useLanguage';
 
 function Header() {
+  const { t } = useLanguage();
   const { user, logout } = useAuth();
   if (!user) return null;
   return (
     <header className="flex items-center justify-between border-b border-brand-border bg-brand-surface px-6 py-3">
-      <span className="text-sm font-medium text-brand-text">Vidhan Sabha CRM — Admin</span>
+      <span className="text-sm font-medium text-brand-text">{t.appTitle}</span>
       <div className="flex items-center gap-3 text-sm text-brand-text-secondary">
         <span>{user.email}</span>
+        <LanguageToggle />
         <button onClick={logout} className="rounded-md px-2 py-1 font-medium text-brand-blue hover:bg-brand-bg">
-          Sign out
+          {t.signOut}
         </button>
       </div>
     </header>

@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { useLanguage } from '../hooks/useLanguage';
 
 export interface FieldConfig<T> {
   key: keyof T;
@@ -15,7 +16,8 @@ interface EntityFormProps<T> {
   submitLabel?: string;
 }
 
-export function EntityForm<T extends object>({ fields, initial, onSubmit, onCancel, submitLabel = 'Save' }: EntityFormProps<T>) {
+export function EntityForm<T extends object>({ fields, initial, onSubmit, onCancel, submitLabel }: EntityFormProps<T>) {
+  const { t } = useLanguage();
   const [values, setValues] = useState<Record<string, unknown>>(() => {
     const base: Record<string, unknown> = {};
     for (const f of fields) {
@@ -45,7 +47,7 @@ export function EntityForm<T extends object>({ fields, initial, onSubmit, onCanc
       }
       await onSubmit(payload);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save');
+      setError(err instanceof Error ? err.message : t.failedToSave);
     } finally {
       setSubmitting(false);
     }
@@ -62,7 +64,7 @@ export function EntityForm<T extends object>({ fields, initial, onSubmit, onCanc
               onChange={(e) => setValues((v) => ({ ...v, [String(f.key)]: e.target.value }))}
               className="w-full rounded-md border border-brand-border px-3 py-1.5 text-sm"
             >
-              <option value="">Select…</option>
+              <option value="">{t.selectPlaceholder}</option>
               {f.options?.map((o) => (
                 <option key={o.value} value={o.value}>
                   {o.label}
@@ -74,7 +76,7 @@ export function EntityForm<T extends object>({ fields, initial, onSubmit, onCanc
               type={f.type === 'number' ? 'number' : 'text'}
               value={String(values[String(f.key)] ?? '')}
               onChange={(e) => setValues((v) => ({ ...v, [String(f.key)]: e.target.value }))}
-              placeholder={f.type === 'csv' ? 'Comma-separated' : undefined}
+              placeholder={f.type === 'csv' ? t.commaSeparatedPlaceholder : undefined}
               className="w-full rounded-md border border-brand-border px-3 py-1.5 text-sm"
             />
           )}
@@ -83,10 +85,10 @@ export function EntityForm<T extends object>({ fields, initial, onSubmit, onCanc
       {error && <div className="text-sm text-red-600">{error}</div>}
       <div className="flex justify-end gap-2 pt-1">
         <button type="button" onClick={onCancel} className="rounded-md px-3 py-1.5 text-sm font-medium text-brand-text-secondary hover:bg-brand-bg">
-          Cancel
+          {t.cancel}
         </button>
         <button type="submit" disabled={submitting} className="rounded-md bg-brand-blue px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-blue-dark disabled:opacity-50">
-          {submitting ? 'Saving…' : submitLabel}
+          {submitting ? t.saving : submitLabel ?? t.save}
         </button>
       </div>
     </form>

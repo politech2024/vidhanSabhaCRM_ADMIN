@@ -5,14 +5,15 @@ import { DataTable } from '../components/DataTable';
 import { EntityForm, type FieldConfig } from '../components/EntityForm';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import type { District } from '../types/entities';
-
-const fields: FieldConfig<District>[] = [
-  { key: 'name', label: 'District name' },
-  { key: 'headquarters', label: 'Headquarters' },
-  { key: 'division', label: 'Division' },
-];
+import { useLanguage } from '../hooks/useLanguage';
 
 export function DistrictsPage() {
+  const { t } = useLanguage();
+  const fields: FieldConfig<District>[] = [
+    { key: 'name', label: t.fieldDistrictName },
+    { key: 'headquarters', label: t.fieldHeadquarters },
+    { key: 'division', label: t.fieldDivision },
+  ];
   const { items, loading, error, create, update, remove } = useCrud<District>('districts');
   const [editing, setEditing] = useState<District | null>(null);
   const [creating, setCreating] = useState(false);
@@ -27,20 +28,20 @@ export function DistrictsPage() {
       setDeleting(null);
       setDeleteError(null);
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Delete failed');
+      setDeleteError(err instanceof Error ? err.message : t.deleteFailed);
     }
   }
 
   return (
     <div className="mx-auto max-w-4xl p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-brand-text">Districts</h1>
+        <h1 className="text-lg font-semibold text-brand-text">{t.districtsTitle}</h1>
         <button onClick={() => setCreating(true)} className="rounded-md bg-brand-blue px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-blue-dark">
-          + Add district
+          {t.addDistrict}
         </button>
       </div>
 
-      {loading && <p className="text-sm text-brand-text-secondary">Loading…</p>}
+      {loading && <p className="text-sm text-brand-text-secondary">{t.loading}</p>}
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {creating && (
@@ -52,7 +53,7 @@ export function DistrictsPage() {
               setCreating(false);
             }}
             onCancel={() => setCreating(false)}
-            submitLabel="Create"
+            submitLabel={t.create}
           />
         </div>
       )}
@@ -72,9 +73,9 @@ export function DistrictsPage() {
 
       <DataTable
         columns={[
-          { key: 'name', label: 'Name' },
-          { key: 'headquarters', label: 'Headquarters' },
-          { key: 'division', label: 'Division' },
+          { key: 'name', label: t.colName },
+          { key: 'headquarters', label: t.fieldHeadquarters },
+          { key: 'division', label: t.fieldDivision },
         ]}
         rows={items}
         onRowClick={(d) => navigate(`/districts/${d.id}/assemblies`)}
@@ -87,8 +88,8 @@ export function DistrictsPage() {
 
       <ConfirmDialog
         open={!!deleting}
-        title="Delete district?"
-        message={`This will fail if ${deleting?.name} still has assemblies attached — delete those first.`}
+        title={t.deleteDistrictTitle}
+        message={deleting ? t.deleteDistrictMessage(deleting.name) : ''}
         error={deleteError}
         onCancel={() => setDeleting(null)}
         onConfirm={handleDelete}
